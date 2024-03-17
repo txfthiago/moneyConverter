@@ -30,39 +30,31 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import br.com.fiap.moneyconvert.R
-import br.com.fiap.moneyconvert.pages.components.ExchangeRateButton
 import br.com.fiap.moneyconvert.pages.components.MoneyTextField
 import br.com.fiap.moneyconvert.pages.components.NumeroComDropdown
-import br.com.fiap.moneyconvert.domain.model.ExchangeRate
-import br.com.fiap.moneyconvert.services.ExchangeRateService
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 fun ConvertMoney(navController: NavController) {
-    var exchangeRateResponse by remember { mutableStateOf<ExchangeRate?>(null) }
-    val exchangeRateService = ExchangeRateService()
 
     var moneyValue by remember { mutableStateOf("") }
 
-    var siglaDaMoedaQueVaiSerConvetida by remember {
+    var baseCoin by remember {
         mutableStateOf("")
     }
 
-    var siglaDaMoedaDestino by remember {
+    var converterCoin by remember {
         mutableStateOf("")
     }
 
     val moedaQueVaiSerConvetida: (String) -> Unit = { newValue ->
         println("testt")
-        siglaDaMoedaQueVaiSerConvetida = newValue
+        baseCoin = newValue
     }
 
     val moedaDestino: (String) -> Unit = { newValue ->
-        siglaDaMoedaDestino = newValue
+        converterCoin = newValue
     }
 
     Row {
@@ -88,7 +80,7 @@ fun ConvertMoney(navController: NavController) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(550.dp)
+                .height(450.dp)
                 .border(width = 1.dp, color = Color.LightGray, shape = RoundedCornerShape(20.dp))
                 .padding(start = 25.dp, end = 25.dp),
             contentAlignment = Alignment.Center
@@ -120,30 +112,13 @@ fun ConvertMoney(navController: NavController) {
 
         }
 
+//        Button(onClick = { CHAMAR API PASSANDO(moneyValue,
+//                baseCoin,
+//                converterCoin) }) {
+//
+//        }
 
-
-        ExchangeRateButton(
-            onClick = {
-                CoroutineScope(Dispatchers.Main).launch {
-                    exchangeRateService.getExchangeRate(
-                        siglaDaMoedaQueVaiSerConvetida,
-                        siglaDaMoedaDestino,
-                        moneyValue,
-                        onSuccess = { response ->
-                            exchangeRateResponse = response
-                        },
-                        onError = { error ->
-                            error.stackTrace
-                        })
-                }
-            }
-        )
-
-
-        exchangeRateResponse?.let { response ->
-            Text("Conversion rate: ${response.conversion_rate}")
-            Text("Conversion result: ${response.conversion_result}")
-        }
+//        EXIBIR RESPOSTAS
 
 
     }
